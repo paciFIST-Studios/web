@@ -1,3 +1,8 @@
+from flask import render_template, url_for, flash, redirect
+from flask_blog import app
+from flask_blog.forms import RegistrationForm, LoginForm
+from flask_blog.models import User, Post
+
 
 posts = [
     {
@@ -22,7 +27,7 @@ def home():
 
 @app.route('/about')
 def about():
-    return render_template('about.html', title='Sexy')
+    return render_template('about.html', title='About')
 
 
 @app.route('/register', methods=['GET', 'POST'])
