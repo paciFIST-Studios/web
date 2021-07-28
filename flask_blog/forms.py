@@ -24,7 +24,7 @@ class LoginForm(FlaskForm):
         DataRequired(), Email()])
 
     password = PasswordField('Password', validators=[
-        DataRequired(), Length(min=6, max=30)])
+    DataRequired(), Length(min=6, max=30)])
 
     remember_login = BooleanField('Remember Me')
 
