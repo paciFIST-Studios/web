@@ -1,6 +1,9 @@
+import os
+import secrets
+from PIL import Image
 from flask import render_template, url_for, flash, redirect, request
 from flask_blog import app, db, bcrypt
-from flask_blog.forms import RegistrationForm, LoginForm
+from flask_blog.forms import RegistrationForm, LoginForm, UpdateAccountForm
 from flask_blog.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -65,7 +68,68 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
+
+def save_profile_image(image):
+    # make a random file name (but not a random file extension) in order to prevent
+    # profile picture file path collisions
+    random_hex = secrets.token_hex(8)
+    _, ext = os.path.splitext(image.filename)
+    image_file_name = random_hex + ext
+    image_storage_path = os.path.join(app.root_path, 'static/user_profile_images', image_file_name)
+
+    # resize image to 125x125
+    storage_size = (125, 125)
+    _image = Image.open(image)
+    _image.thumbnail(storage_size)
+
+    # save from the resized file
+    _image.save(image_storage_path)
+    return image_file_name
+
+def remove_stored_profile_image(filename):
+    _image = os.path.join(app.root_path, 'static/user_profile_images', filename)
+    if os.path.isfile(_image):
+        os.remove(_image)
+
 @app.route('/account', methods=['GET','POST'])
 @login_required
 def account():
-    return render_template('account.html', title='Account')
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        _has_changes = False
+
+        # username
+        if current_user.username != form.username.data:
+            current_user.username = form.username.data
+            _has_changes = True
+
+        # email
+        if current_user.email != form.email.data:
+            current_user.email = form.email.data
+            _has_changes = True
+
+        # profile image
+        if form.image.data:
+            image_file = save_profile_image(form.image.data)
+            to_remove = current_user.image_file
+            current_user.image_file = image_file
+            remove_stored_profile_image(filename=to_remove)
+            _has_changes = True
+
+        # commit changes to db
+        if _has_changes:
+            db.session.commit()
+            flash('Your account has been updated', 'success')
+        else:
+            flash('No updates to account', 'info')
+
+        # perform redirect, according to POST-GET-REDIRECT pattern
+        return redirect(url_for('account'))
+
+    # pre-populate form with existing data
+    elif request.method == "GET":
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+
+    image_file = url_for('static', filename=f'user_profile_images/{current_user.image_file}')
+    return render_template('account.html', title='Account', image_file=image_file, form=form)
