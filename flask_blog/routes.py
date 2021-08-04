@@ -87,6 +87,10 @@ def save_profile_image(image):
     return image_file_name
 
 def remove_stored_profile_image(filename):
+    # note: don't delete our default image.
+    # happens the first time user attempts to update their profile
+    if filename == 'default.jpg':
+        return
     _image = os.path.join(app.root_path, 'static/user_profile_images', filename)
     if os.path.isfile(_image):
         os.remove(_image)
