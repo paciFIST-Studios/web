@@ -3,20 +3,20 @@
 {% block content %}
     <h1>Home Page</h1>
     Ellie has arrived
-    <p>
-        {% for post in posts %}
-            <!-- https://github.com/CoreyMSchafer/code_snippets/blob/master/Python/Flask_Blog/snippets/article.html -->
-            <article class="media content-section">
-              <div class="media-body">
+    {% for post in posts %}
+        <article class="media content-section">
+            <img class="rounded-circle article-img"
+             src="{{ url_for('static', filename='user_profile_images/' + post.author.image_file) }}">
+
+            <div class="media-body">
                 <div class="article-metadata">
-                  <a class="mr-2" href="#">{{ post.author }}</a>
-                  <small class="text-muted">{{ post.date_posted }}</small>
+                    <a class="mr-2" href="#">{{ post.author.username }}</a>
+                    <small class="text-muted">{{ post.date_posted.strftime('%Y%m%d %H:%m.%S') }}</small>
                 </div>
-                <h2><a class="article-title" href="#">{{ post.title }}</a></h2>
+                <h2><a class="article-title" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
                 <p class="article-content">{{ post.content }}</p>
-              </div>
-            </article>
-        {% endfor %}
-    </p>
+            </div>
+        </article>
+    {% endfor %}
 {% endblock content %}
 
