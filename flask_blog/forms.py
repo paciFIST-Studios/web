@@ -75,6 +75,7 @@ class UpdateAccountForm(FlaskForm):
 
 
 class EditPostForm(FlaskForm):
+    # note: we can add profanity filters in the validation step
     title = StringField('Title', validators=[DataRequired()])
     content = TextAreaField('Content', validators=[DataRequired()])
 
