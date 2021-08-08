@@ -1,3 +1,4 @@
+import json
 import os
 
 from flask import Flask
@@ -42,12 +43,17 @@ login_manager.login_message_category = 'info'
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = None
+app.config['MAIL_PASSWORD'] = None
 
 app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASSWORD')
 
-if 'MAIL_USERNAME' not in app.config or 'MAIL_PASSWORD' not in app.config:
-    print('Warning! Could not retrieve email credentials!  Password reset via email will not work!')
+if not app.config['MAIL_USERNAME'] or not app.config['MAIL_PASSWORD']:
+    with open('email_credentials', 'r') as infile:
+        json = json.loads(infile.read())
+        app.config['MAIL_USERNAME'] = json['EMAIL_USERNAME']
+        app.config['MAIL_PASSWORD'] = json['EMAIL_PASSWORD']
 
 mail = Mail(app)
 
