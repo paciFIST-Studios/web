@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
@@ -41,11 +43,10 @@ app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 
-# note: these are set in the local environment:  /etc/environment
-app.config['EMAIL_USERNAME'] = os.environ.get('EMAIL_USERNAME')
-app.config['EMAIL_PASSWORD'] = os.environ.get('EMAIL_PASSWORD')
+app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASSWORD')
 
-if not app.config['EMAIL_USERNAME'] or not app.config['EMAIL_PASSWORD']:
+if 'MAIL_USERNAME' not in app.config or 'MAIL_PASSWORD' not in app.config:
     print('Warning! Could not retrieve email credentials!  Password reset via email will not work!')
 
 mail = Mail(app)
