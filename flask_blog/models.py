@@ -1,5 +1,6 @@
 from datetime import datetime
-from flask_blog import db, app
+from flask import current_app
+from flask_blog import db
 from flask_blog import login_manager
 
 from flask_login import UserMixin
@@ -20,12 +21,12 @@ class User(db.Model, UserMixin):
     posts = db.relationship('Post', backref='author', lazy=True)
 
     def get_reset_token(self, lifetime=1800):
-        _s = Serializer(app.config['SECRET_KEY'], expires_in=lifetime)
+        _s = Serializer(current_app.config['SECRET_KEY'], expires_in=lifetime)
         return _s.dumps({'user_id': self.id}).decode('utf-8')
 
     @staticmethod
     def verify_reset_token(token) -> dict:
-        _s = Serializer(app.config['SECRET_KEY'])
+        _s = Serializer(current_app.config['SECRET_KEY'])
         try:
             user_id = _s.loads(token)['user_id']
         except SignatureExpired:
@@ -53,3 +54,10 @@ class Post(db.Model):
     def __repr__(self):
         return f'Post("{self.title}", "{self.date_posted}")'
 
+
+class Tag(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(30), nullable=False)
+
+    def __repr__(self):
+        return f'Tag("{self.title}")'

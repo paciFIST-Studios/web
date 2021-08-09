@@ -46,7 +46,7 @@
         <div class="form-group">
           {{ form.submit(class="btn btn-outline-info") }}
           <small class="text-muted ml-2">
-              <a href="{{ url_for('request_password_reset') }}">Forgot Password?</a>
+              <a href="{{ url_for('users.request_password_reset') }}">Forgot Password?</a>
           </small>
         </div>
       </fieldset>
@@ -55,7 +55,7 @@
   <!-- Let user sign in if they already have an account -->
   <div class="border-top pd-3">
     <small class="text-muted">
-      Want to register? <a class="ml-2" href="{{ url_for('login') }}">Sign Up</a>
+      Want to register? <a class="ml-2" href="{{ url_for('users.login') }}">Sign Up</a>
     </small>
   </div>
 {% endblock content %}
