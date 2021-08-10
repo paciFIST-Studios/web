@@ -42,7 +42,7 @@ def send_reset_email(user):
                   , recipients=[user.email])
     msg.body = f'''{ user.username },
 Use this link to reset your password.
-{url_for("password_reset", token=token, _external=True)}
+{url_for("users.password_reset", token=token, _external=True)}
 
 If you did not make this request, please contact the web administrator.
 
