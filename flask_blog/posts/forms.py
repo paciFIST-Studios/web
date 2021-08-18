@@ -2,9 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField, FieldList
 from wtforms.validators import DataRequired, ValidationError
 
-from flask_blog.models import User, Tag
-
-
+from flask_blog.models import Tag
 
 
 class EditPostForm(FlaskForm):
@@ -22,8 +20,8 @@ class EditPostTagsForm(FlaskForm):
 
     def validate_tags(self, tags):
         pass
-        tag = Tag.query.filter_by(tag=tags)
-        already_taken = User.query.filter_by(username=username.data).first()
-        if already_taken:
-            raise ValidationError('Tag already exists!')
+        #tag = Tag.query.filter_by(tag=tags)
+        #already_taken = User.query.filter_by(username=username.data).first()
+        #if already_taken:
+        #    raise ValidationError('Tag already exists!')
 
