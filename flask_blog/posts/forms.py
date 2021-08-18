@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField, FieldList
 from wtforms.validators import DataRequired, ValidationError
 
-from flask_blog.models import Tag
+from flask_blog.models import User, Tag
 
 
 
@@ -19,7 +19,6 @@ class EditPostTagsForm(FlaskForm):
     tags = FieldList(StringField('Tag', validators=[]))
 
     submit = SubmitField('Update Tags')
-
 
     def validate_tags(self, tags):
         pass
