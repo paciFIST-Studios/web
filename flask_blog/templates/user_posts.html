@@ -3,7 +3,6 @@
 {% block content %}
 
     <h1 class="mb-3">{{ user.username }}'s posts ({{ posts.total }})</h1>
-    Ellie has arrived
 
     {% for post in posts.items %}
         <article class="media content-section">
@@ -35,4 +34,3 @@
     {% endfor %}
 
 {% endblock content %}
-

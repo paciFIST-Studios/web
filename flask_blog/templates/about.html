@@ -2,5 +2,13 @@
 {% extends "layout.html" %}
 {% block content %}
     <h1>About Page</h1>
-    <p>Ellie becomes</p>
+    <p>Hello! Welcome to FlaskBlog, a portfolio project for Ellie Barrett</p>
+    <p>
+        This website's code is hosted on github, and the site itself is hosted on Linnode.  Automated tests run on
+        github for new commits and data migrations are run to transfer the code from github to the server
+    </p>
+    <div>
+        {% block resume %}
+        {% endblock resume %}
+    </div>
 {% endblock content %}
