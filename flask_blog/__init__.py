@@ -44,3 +44,5 @@ def create_application(config_class=Config):
     app.register_blueprint(errors)
 
     return app
+
+    # minor change
