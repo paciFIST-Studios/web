@@ -45,4 +45,4 @@ def create_application(config_class=Config):
 
     return app
 
-    # minor change
+    # minor change 1
