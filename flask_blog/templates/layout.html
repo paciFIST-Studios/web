@@ -66,6 +66,8 @@
         <!-- this block is overridden by other forms -->
         {% block content %}{% endblock %}
       </div>
+      {% if hide_side_bar %}
+      {% else %}
       <div class="col-md-4">
         <div class="content-section">
           <h3>Site Developer</h3>
@@ -77,6 +79,7 @@
             </ul>
         </div>
       </div>
+      {% endif %}
     </div>
   </main>
 

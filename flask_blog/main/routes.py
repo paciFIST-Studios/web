@@ -16,4 +16,4 @@ def home():
 
 @main.route('/about')
 def about():
-    return render_template('resume.html', title='Resume')
+    return render_template('resume.html', title='Resume', hide_side_bar=True)

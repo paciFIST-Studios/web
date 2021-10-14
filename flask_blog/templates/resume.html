@@ -1,16 +1,43 @@
 {% extends "layout.html" %}
 {% block content %}
 <h1>Elizabeth Barrett</h1>
-<p>Software Developer in Test (SDET)<br> ellie@paciFIST.studio<br> Seattle, Washington, USA</p>
-<p/>
+<p>Software Developer in Test (SDET)
+    <br> Seattle, Washington, USA
+    <br> ellie@paciFIST.studio
+</p>
+<br>
 <h3>Automated Testing Pipeline Development</h3>
 <ul>
-    <li><b>Automated Testing Framework, Motiga</b>
-        <p>words</p>
+    <li>Automated Testing Framework, Motiga -- a C# tool
+        <p> Developed a C# testing harness for multiplayer match-result data. This system simulated more than
+            50K multiplayer matches, and uncovered a server-crash bug, preventing it from reaching the production
+            environment.  This system was also responsible for testing user-account progression.</p>
     </li>
-    <li>End to End Automated Testing, ArenaNet
-        <p>words</p>
+    <br>
+    <li>End to End Automated Testing, ArenaNet -- a Python and Tableau tool
+        <p> As part of SDET team, developed Tableau visualizations, tests, and testing hooks, for an end-to-end
+            testing system, which indicated build health for daily builds.  Automated tests ran against new engine
+            builds on the build server.</p>
     </li>
 </ul>
+<br>
+
+<h3>Tools Development</h3>
+<ul>
+    <li>Game Data Reader, Motiga -- a C#, WPF tool
+        <p> Developed a reader, which allowed QA department to read game data easily, without having to view it in
+            the game itself.  Over two years, this tool saved $50K in enhanced productivity.</p>
+    </li>
+    <br>
+    <li>Changelist Classifier, ArenaNet -- a Python tool
+        <p> Developed a command line tool for querying a subset of changes, submitted to a Perforce code repository.
+            In addition, this tool would generate a text document, containing a summary of the changes in the queried
+            subset.  This tool saved one embedded QA tester 4 hours each week.</p>
+    </li>
+</ul>
+<br>
+
+<h6>Web Development</h6>
+<p>This website is developed in python, using Flask.  The code is hosted on github, and the server is hosted by Linnode.</p>
 
 {% endblock content %}
