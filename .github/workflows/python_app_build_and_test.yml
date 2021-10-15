@@ -83,6 +83,6 @@ jobs:
           port: ${{ secrets.BLOG_SERVER_PORT }}
           passphrase: ${{ secrets.BLOG_SERVER_PASSPHRASE }}
           script: |
-            cd web.git
+            cd web.git/web
             git pull origin production
             git status
