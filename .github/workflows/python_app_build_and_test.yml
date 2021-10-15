@@ -67,12 +67,12 @@ jobs:
   deploy_to_server:
     name: Deploy To Production Server
 
+    # https://github.community/t/how-to-implement-an-after-success-action/16919
     if: ${{ github.ref == 'refs/heads/production' }}
     needs: build_and_test
     runs-on: ubuntu-latest
 
     steps:
-#      - run: echo 'test followup job'
       - name: SSH Remote Commands
 #        uses: appleboy/ssh-action@master
         uses: appleboy/ssh-action@v0.1.4
@@ -81,6 +81,7 @@ jobs:
           username: ${{ secrets.BLOG_SERVER_USERNAME }}
           key: ${{ secrets.BLOG_SERVER_KEY }}
           port: ${{ secrets.BLOG_SERVER_PORT }}
+          passphrase: ${{ secrets.BLOG_SERVER_PASSPHRASE }}
           script: |
             cd web.git
             git pull origin production
