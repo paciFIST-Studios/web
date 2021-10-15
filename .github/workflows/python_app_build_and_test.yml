@@ -37,7 +37,7 @@ jobs:
   release:
     name: Deploy To Production Server
 
-#    if: ${{ github.ref == 'production' }}
+    if: ${{ github.job.status == 'success' }}
     needs: build
     runs-on: ubuntu-latest
 
