@@ -85,5 +85,11 @@ jobs:
           script: |
             whoami
             cd web
+
+          # in case someone has modified a file on the server manually, and now the depot has changes
+          # in it, and therefore rejects updates to those files
+            git restore .
+
+          # update
             git pull origin production
             git status
