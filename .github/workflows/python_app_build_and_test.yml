@@ -44,6 +44,8 @@ jobs:
 
     steps:
       - run: echo 'test followup job'
+      - run: echo 'github.job.status '+${{ github.job.status }}
+
 
 
 #  release:
