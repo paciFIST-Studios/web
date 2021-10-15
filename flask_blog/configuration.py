@@ -1,11 +1,6 @@
 import os
-import json
 
-def load_json(path):
-    if os.path.isfile(path):
-        with open(path) as infile:
-            return json.load(infile)
-    return None
+from flask_blog.util import load_json
 
 secret = '/etc/web.config.json'
 config = load_json(secret)
