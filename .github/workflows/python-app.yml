@@ -34,23 +34,23 @@ jobs:
       run: |
         python3 -m unittest discover
 
-  release:
-    if: ${{ github.ref == 'production' }}
-    needs: build
-
-    name: Deployment to Production Server
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: SSH Remote Commands
-#      - uses: appleboy/ssh-action@v0.1.4
-      - uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.BLOG_SERVER }}
-          username: ${{ secrets.BLOG_SERVER_USERNAME }}
-          key: ${{ secrets.BLOG_SERVER_KEY }}
-          port: ${{ secrets.BLOG_SERVER_PORT }}
-          script: |
-            cd web
-            git pull origin production
-            git status
+#  release:
+#    if: ${{ github.ref == 'production' }}
+#    needs: build
+#
+#    name: Deployment to Production Server
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: SSH Remote Commands
+##      - uses: appleboy/ssh-action@v0.1.4
+#      - uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.BLOG_SERVER }}
+#          username: ${{ secrets.BLOG_SERVER_USERNAME }}
+#          key: ${{ secrets.BLOG_SERVER_KEY }}
+#          port: ${{ secrets.BLOG_SERVER_PORT }}
+#          script: |
+#            cd web
+#            git pull origin production
+#            git status
