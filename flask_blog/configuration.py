@@ -1,16 +1,22 @@
 import os
+import json
+
+config = None
+with open('/etc/web.config.json') as infile:
+    config = json.load(infile)
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY')
+    SECRET_KEY = config.get("SECRET_KEY") if config else os.environ.get('SECRET_KEY')
 
-    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
+    SQLALCHEMY_DATABASE_URI = config.get("SQLALCHEMY_DATABASE_URI") \
+        if config else os.environ.get('SQLALCHEMY_DATABASE_URI')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 465
     MAIL_USE_SSL = True
-    MAIL_USERNAME = os.environ.get('EMAIL_USERNAME')
-    MAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+    MAIL_USERNAME = config.get("EMAIL_USERNAME") if config else os.environ.get('EMAIL_USERNAME')
+    MAIL_PASSWORD = config.get("EMAIL_PASSWORD") if config else os.environ.get('EMAIL_PASSWORD')
 
     SESSION_COOKIE_SECURE = True
     REMEMBER_COOKIE_SECURE = True
@@ -23,8 +29,8 @@ class TestConfig:
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 465
     MAIL_USE_SSL = True
-    MAIL_USERNAME = os.environ.get('EMAIL_USERNAME')
-    MAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+    MAIL_USERNAME = config.get('EMAIL_USERNAME') if config else os.environ.get('EMAIL_USERNAME')
+    MAIL_PASSWORD = config.get('EMAIL_PASSWORD') if config else os.environ.get('EMAIL_PASSWORD')
 
     SESSION_COOKIE_SECURE = True
     REMEMBER_COOKIE_SECURE = True
