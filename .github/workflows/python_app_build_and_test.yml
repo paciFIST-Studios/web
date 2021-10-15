@@ -83,8 +83,13 @@ jobs:
           port: ${{ secrets.BLOG_SERVER_PORT }}
           passphrase: ${{ secrets.BLOG_SERVER_PASSPHRASE }}
           script: |
-            whoami
             cd web
             git checkout production
             git pull origin production
             git status
+
+          # cd web                      - change dir into the git depo on deployment server
+          # git checkout production     - checking out production branch drops existing changes, in case there are any
+          #                               existing changes can interrupt the pull command for those files
+          # git pull origin production  - pull from remote, from production branch
+          # git status                  -
