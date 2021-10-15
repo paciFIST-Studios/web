@@ -43,6 +43,7 @@ def create_application(config_class=Config):
     app.register_blueprint(main)
     app.register_blueprint(errors)
     # minor changes: push to server testing
+    # test I hope I didn't break main
 
     return app
 
