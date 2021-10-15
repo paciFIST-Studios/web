@@ -1,9 +1,14 @@
 import os
 import json
 
-config = None
-with open('/etc/web.config.json') as infile:
-    config = json.load(infile)
+def load_json(path):
+    if os.path.isfile(path):
+        with open(path) as infile:
+            return json.load(infile)
+    return None
+
+secret = '/etc/web.config.json'
+config = load_json(secret)
 
 class Config:
     SECRET_KEY = config.get("SECRET_KEY") if config else os.environ.get('SECRET_KEY')
