@@ -42,8 +42,7 @@ def create_application(config_class=Config):
     app.register_blueprint(posts)
     app.register_blueprint(main)
     app.register_blueprint(errors)
-    # minor change: testing to see if this gets pushed to server
-    # more tests
+    # minor changes: push to server testing
 
     return app
 
