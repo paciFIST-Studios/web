@@ -67,8 +67,8 @@ jobs:
   release:
     name: Deploy To Production Server
 
-    if: ${{ github.ref == '/refs/heads/production' }} &&
-        ${{ job.status == 'success' }}
+    if: ${{ github.ref == '/refs/heads/production' }}
+#    &&  ${{ job.status == 'success' }}
     needs: build
     runs-on: ubuntu-latest
 
