@@ -8,7 +8,7 @@ on:
     branches: [ production, dev ]
 
 jobs:
-  build:
+  build_and_test:
 
     name: Lint and Automated Tests
     runs-on: ubuntu-latest
@@ -35,56 +35,45 @@ jobs:
         python3 -m unittest discover
 
 
-  dump_context:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-        run: echo "$GITHUB_CONTEXT"
-      - name: Dump job context
-        env:
-          JOB_CONTEXT: ${{ toJSON(job) }}
-        run: echo "$JOB_CONTEXT"
-      - name: Dump steps context
-        env:
-          STEPS_CONTEXT: ${{ toJSON(steps) }}
-        run: echo "$STEPS_CONTEXT"
-      - name: Dump runner context
-        env:
-          RUNNER_CONTEXT: ${{ toJSON(runner) }}
-        run: echo "$RUNNER_CONTEXT"
-      - name: Dump strategy context
-        env:
-          STRATEGY_CONTEXT: ${{ toJSON(strategy) }}
-        run: echo "$STRATEGY_CONTEXT"
-      - name: Dump matrix context
-        env:
-          MATRIX_CONTEXT: ${{ toJSON(matrix) }}
-        run: echo "$MATRIX_CONTEXT"
+#  dump_context:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Dump GitHub context
+#        env:
+#          GITHUB_CONTEXT: ${{ toJSON(github) }}
+#        run: echo "$GITHUB_CONTEXT"
+#      - name: Dump job context
+#        env:
+#          JOB_CONTEXT: ${{ toJSON(job) }}
+#        run: echo "$JOB_CONTEXT"
+#      - name: Dump steps context
+#        env:
+#          STEPS_CONTEXT: ${{ toJSON(steps) }}
+#        run: echo "$STEPS_CONTEXT"
+#      - name: Dump runner context
+#        env:
+#          RUNNER_CONTEXT: ${{ toJSON(runner) }}
+#        run: echo "$RUNNER_CONTEXT"
+#      - name: Dump strategy context
+#        env:
+#          STRATEGY_CONTEXT: ${{ toJSON(strategy) }}
+#        run: echo "$STRATEGY_CONTEXT"
+#      - name: Dump matrix context
+#        env:
+#          MATRIX_CONTEXT: ${{ toJSON(matrix) }}
+#        run: echo "$MATRIX_CONTEXT"
 
 
-  release:
+  deploy_to_server:
     name: Deploy To Production Server
 
     if: ${{ github.ref == 'refs/heads/production' }}
-#    &&  ${{ job.status == 'success' }}
-    needs: build
+    needs: build_and_test
     runs-on: ubuntu-latest
-
 
     steps:
       - run: echo 'test followup job'
 
-
-
-#  release:
-##    if: ${{ github.ref == 'production' }}
-#    needs: build
-#    runs-on: ubuntu-latest
-#
-#    name: Deployment to Production Server
-#
 #    steps:
 #      - name: SSH Remote Commands
 #        uses: appleboy/ssh-action@master
