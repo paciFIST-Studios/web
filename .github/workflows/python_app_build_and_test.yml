@@ -81,6 +81,6 @@ jobs:
           key: ${{ secrets.BLOG_SERVER_KEY }}
           port: ${{ secrets.BLOG_SERVER_PORT }}
           script: |
-            cd web
+            cd web.git
             git pull origin production
             git status
