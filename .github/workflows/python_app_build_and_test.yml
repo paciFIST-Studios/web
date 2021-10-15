@@ -75,7 +75,7 @@ jobs:
 #      - run: echo 'test followup job'
       - name: SSH Remote Commands
 #        uses: appleboy/ssh-action@master
-        uses: appleboy/ssh-action@0.1.4
+        uses: appleboy/ssh-action@v0.1.4
         with:
           host: ${{ secrets.BLOG_SERVER }}
           username: ${{ secrets.BLOG_SERVER_USERNAME }}
