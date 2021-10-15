@@ -34,12 +34,13 @@ jobs:
       run: |
         python3 -m unittest discover
 
-#  release:
-#    if: ${{ github.ref == 'production' }}
-#    needs: build
+  release:
+    if: ${{ github.ref == 'production' }}
+    needs: build
+    runs-on: ubuntu-latest
+
 #
 #    name: Deployment to Production Server
-#    runs-on: ubuntu-latest
 #
 #    steps:
 #      - name: SSH Remote Commands
