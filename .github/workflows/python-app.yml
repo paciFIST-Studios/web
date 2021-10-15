@@ -1,15 +1,16 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Python application
+name: Python Application Deployment Workflow
 
 on:
   push:
-    branches: [ main ]
+    branches: [ production, dev ]
 
 jobs:
   build:
 
+    name: Lint and Automated Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -32,3 +33,24 @@ jobs:
     - name: Test with unittest
       run: |
         python3 -m unittest discover
+
+  release:
+    if: ${{ github.ref == 'production' }}
+    needs: build
+
+    name: Deployment to Production Server
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SSH Remote Commands
+#      - uses: appleboy/ssh-action@v0.1.4
+      - uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.BLOG_SERVER }}
+          username: ${{ secrets.BLOG_SERVER_USERNAME }}
+          key: ${{ secrets.BLOG_SERVER_KEY }}
+          port: ${{ secrets.BLOG_SERVER_PORT }}
+          script: |
+            cd web
+            git pull origin production
+            git status
