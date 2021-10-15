@@ -34,6 +34,14 @@ jobs:
       run: |
         python3 -m unittest discover
 
+  release:
+    if: ${{ github.ref == 'production' }}
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo 'test followup job'
+
+
 #  release:
 ##    if: ${{ github.ref == 'production' }}
 #    needs: build
