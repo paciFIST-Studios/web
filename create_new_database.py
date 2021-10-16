@@ -2,8 +2,10 @@ from datetime import datetime
 import os
 import sys
 
-from flask_blog import create_application, db
+from flask_blog import create_application, bcrypt, db
 from flask_blog.util import load_json
+
+from flask_blog.models import Post, User
 
 def get_configuration():
     secret = '/etc/web.config.json'
@@ -34,6 +36,14 @@ def rename_existing_database(config):
 def print_if(message, b):
     if b:
         print(message)
+
+def add_generic_basic_data_to_database(db):
+    hashed_password = bcrypt.generate_password_hash('test1password').decode('utf-8')
+    user = User(username='test1', email='test1@test.com', password=hashed_password)
+    db.session.add(user)
+    post = Post(title='Test Blog Post', content='this post is generated during database rebuild', author=user.username)
+    db.session.add(post)
+    db.session.commit()
 
 def run(verbose):
     print_if('Now Rebuilding Database', verbose)
@@ -73,6 +83,7 @@ def run(verbose):
         print_if('Creating Database Tables', verbose)
         db.create_all(app=app)
         if existing_database_detected(config):
+            add_generic_basic_data_to_database(db)
             print_if('Database Rebuilt Successfully', verbose)
         else:
             print('Error Rebuilding Database')
