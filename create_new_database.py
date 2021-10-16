@@ -69,7 +69,7 @@ def print_if(message, b):
         print(message)
 
 
-def run(verbose):
+def run(verbose, test_data):
     print_if('Now Rebuilding Database', verbose)
     print_if('Searching for system configuration', verbose)
     config = get_configuration()
@@ -107,16 +107,28 @@ def run(verbose):
         print_if('Creating Database Tables', verbose)
         db.create_all(app=app)
         if existing_database_detected(config):
-            print_if('Database Recreated. Adding Test Information', verbose)
-            add_test_data_to_db(db, app)
-            print_if('Database Rebuilt Successfully', verbose)
-            data = get_testing_data()
-            print_if('Testing Data:'+str(data), verbose)
-            print_if('\nTest Account:\n    email: {}\n    password: {}'.format(
-                data['email'], data['password']), verbose)
+            if test_data:
+                print_if('Database Recreated. Adding Test Information', verbose)
+                add_test_data_to_db(db, app)
+                data = get_testing_data()
+                print_if('Testing Data:'+str(data), verbose)
+                print_if('\nTest Account:\n    email: {}\n    password: {}'.format(
+                    data['email'], data['password']), verbose)
         else:
             print('Error Rebuilding Database')
+    print_if('Database Rebuilt Successfully', verbose)
 
 if __name__  == '__main__':
     v = True if '-v' in sys.argv[1:] else False
-    run(verbose=v)
+    t = True if '-t' in sys.argv[1:] else False
+    h = True if '-t' in sys.argv[1:] else False
+    if not h:
+        run(verbose=v, test_data=t)
+    else:
+        print('''
+    python3 create_new_database.py -v   creates db, verbose commentary
+    python3 create_new_database.py -t   creates db, test data
+    python3 create_new_database.py -h   shows help
+
+    python3 create_new_database.py -v -t   creates db, test data, verbose           
+        ''')
