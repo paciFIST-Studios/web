@@ -7,6 +7,22 @@ from flask_blog.util import load_json
 
 from flask_blog.models import Post, User
 
+def get_testing_data():
+    return {
+        'username':'test1',
+        'email':'test1@test.com',
+        'password':'test1password',
+        'post1':{
+                'title':'Test Blog Post',
+                'content':'This post was generated during a database rebuild'
+        },
+        'post2':{
+                'title':'Additional Testing Post',
+                'content':'Remember: Testing user { "username":"test1",' \
+                         ' "email":"test1@test.com", "password":"test1password"}'
+        }
+    }
+
 def get_configuration():
     secret = '/etc/web.config.json'
     config = load_json(secret)
@@ -33,17 +49,25 @@ def rename_existing_database(config):
         return new_file_path
     return None
 
+def add_test_data_to_db(db, app):
+    app.app_context().push()
+    data = get_testing_data()
+    hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+    user = User(username=data['username'], email=data['email'], password=hashed_password)
+    db.session.add(user)
+    # commit the user, b/c that gives the user an id, and we need the idea to make the post
+    db.session.commit()
+
+    post1 = Post(title=data['post1']['title'], content=data['post1']['content'], user_id=user.id)
+    post2 = Post(title=data['post2']['title'], content=data['post2']['content'], user_id=user.id)
+    db.session.add(post1)
+    db.session.add(post2)
+    db.session.commit()
+
 def print_if(message, b):
     if b:
         print(message)
 
-def add_generic_basic_data_to_database(db):
-    hashed_password = bcrypt.generate_password_hash('test1password').decode('utf-8')
-    user = User(username='test1', email='test1@test.com', password=hashed_password)
-    db.session.add(user)
-    post = Post(title='Test Blog Post', content='this post is generated during database rebuild', author=user.username)
-    db.session.add(post)
-    db.session.commit()
 
 def run(verbose):
     print_if('Now Rebuilding Database', verbose)
@@ -83,8 +107,13 @@ def run(verbose):
         print_if('Creating Database Tables', verbose)
         db.create_all(app=app)
         if existing_database_detected(config):
-            add_generic_basic_data_to_database(db)
+            print_if('Database Recreated. Adding Test Information', verbose)
+            add_test_data_to_db(db, app)
             print_if('Database Rebuilt Successfully', verbose)
+            data = get_testing_data()
+            print_if('Testing Data:'+str(data), verbose)
+            print_if('\nTest Account:\n    email: {}\n    password: {}'.format(
+                data['email'], data['password']), verbose)
         else:
             print('Error Rebuilding Database')
 
