@@ -18,8 +18,8 @@ def get_testing_data():
         },
         'post2':{
                 'title':'Additional Testing Post',
-                'content':'Remember: Testing user { "username":"test1",' \
-                         ' "email":"test1@test.com", "password":"test1password"}'
+                'content':'Remember: Testing user { "username":"test1", '
+                          ' "email":"test1@test.com", "password":"test1password"}'
         }
     }
 
@@ -67,7 +67,6 @@ def add_test_data_to_db(db, app):
 def print_if(message, b):
     if b:
         print(message)
-
 
 def run(verbose, test_data):
     print_if('Now Rebuilding Database', verbose)
@@ -121,7 +120,7 @@ def run(verbose, test_data):
 if __name__  == '__main__':
     v = True if '-v' in sys.argv[1:] else False
     t = True if '-t' in sys.argv[1:] else False
-    h = True if '-t' in sys.argv[1:] else False
+    h = True if '-h' in sys.argv[1:] else False
     if not h:
         run(verbose=v, test_data=t)
     else:
@@ -130,5 +129,5 @@ if __name__  == '__main__':
     python3 create_new_database.py -t   creates db, test data
     python3 create_new_database.py -h   shows help
 
-    python3 create_new_database.py -v -t   creates db, test data, verbose           
+    python3 create_new_database.py -v -t   creates db, test data, verbose
         ''')
