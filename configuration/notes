@@ -1,0 +1,9 @@
+
+;  in order to start supervisor, you can to run the command
+;  and give it the config file path
+
+sudo supervisord -c /etc/supervisor/supervisord.conf
+
+
+
+
