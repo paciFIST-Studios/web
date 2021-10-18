@@ -1,3 +1,8 @@
+# contents of virtual environments belong on local machines only
 venv/*
 
+# don't back up pycache
 *__pycache__*
+
+# don't add database to github depot
+*.db
