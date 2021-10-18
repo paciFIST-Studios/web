@@ -18,8 +18,8 @@ class Config:
     MAIL_USERNAME = config.get("EMAIL_USERNAME") if config else os.environ.get('EMAIL_USERNAME')
     MAIL_PASSWORD = config.get("EMAIL_PASSWORD") if config else os.environ.get('EMAIL_PASSWORD')
 
-    # SESSION_COOKIE_SECURE = True
-    # REMEMBER_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    REMEMBER_COOKIE_SECURE = True
 
 class TestConfig:
     SECRET_KEY = 'secret'
@@ -32,8 +32,8 @@ class TestConfig:
     MAIL_USERNAME = config.get('EMAIL_USERNAME') if config else os.environ.get('EMAIL_USERNAME')
     MAIL_PASSWORD = config.get('EMAIL_PASSWORD') if config else os.environ.get('EMAIL_PASSWORD')
 
-    # SESSION_COOKIE_SECURE = True
-    # REMEMBER_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    REMEMBER_COOKIE_SECURE = True
 
     TESTING = True
     WTF_CSRF_ENABLED = False
