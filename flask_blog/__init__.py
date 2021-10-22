@@ -17,7 +17,7 @@ login_manager = LoginManager()
 login_manager.login_view = 'users.login'
 login_manager.login_message_category = 'info'
 # note: session protections are handled by Paranoid
-# login_manager.session_protection = None
+login_manager.session_protection = None
 
 mail = Mail()
 
@@ -31,8 +31,8 @@ def create_application(config_class=Config):
     mail.init_app(app)
 
     # https://github.com/miguelgrinberg/flask-paranoid
-    # paranoid = Paranoid(app)
-    # paranoid.redirect_view = '/'
+    paranoid = Paranoid(app)
+    paranoid.redirect_view = '/'
 
     from flask_blog.users.routes import users
     from flask_blog.posts.routes import posts
@@ -42,8 +42,6 @@ def create_application(config_class=Config):
     app.register_blueprint(posts)
     app.register_blueprint(main)
     app.register_blueprint(errors)
-    # minor changes: push to server testing
-    # test I hope I didn't break main
 
     return app
 
