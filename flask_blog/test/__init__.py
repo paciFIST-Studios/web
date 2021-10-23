@@ -39,17 +39,19 @@ class UnitTestBase(unittest.TestCase):
     def setUpClass(cls):
         cls.app = create_application(config_class=USING_CONFIG_CLASS)
 
+        # we'll use the test client to send requests to the application
         cls.client = cls.app.test_client()
 
         # get db path
         cls.app_root_path = cls.app.config.root_path
-        cls.app_db_uri = cls.app.config['SQLALCHEMY_DATABASE_URI']
-        cls.app_db_path = os.path.join(cls.app_root_path, cls.app_db_uri.split('///')[-1])
+        cls.test_db_uri = cls.app.config['SQLALCHEMY_DATABASE_URI']
+        cls.test_db_path = os.path.join(cls.app_root_path, cls.test_db_uri.split('///')[-1])
 
         # it's possible that cleanup of the test db failed on a previous run
-        if os.path.isfile(cls.app_db_path):
-            os.remove(cls.app_db_path)
+        if os.path.isfile(cls.test_db_path):
+            os.remove(cls.test_db_path)
 
+        # create test db
         with cls.app.app_context():
             db.create_all()
             # Add test user to test db, so different test suites can access db w/o having to register
@@ -64,8 +66,11 @@ class UnitTestBase(unittest.TestCase):
         with cls.app.app_context():
             db.drop_all()
 
-        if os.path.isfile(cls.app_db_path):
-            os.remove(cls.app_db_path)
+        # here, we remove the test db.  Note: if the program is interrupted--that's particularly
+        # common if you're using breakpoints in an IDE--this code might not run, and therefore
+        # we also make a point to remove it just before creation of the test db in setUpClass fn
+        if os.path.isfile(cls.test_db_path):
+            os.remove(cls.test_db_path)
 
 
     @staticmethod
@@ -90,7 +95,7 @@ class UnitTestBase(unittest.TestCase):
         self.assertTrue(self.client)
 
         # testing db should now exist
-        self.assertTrue(os.path.isfile(self.app_db_path))
+        self.assertTrue(os.path.isfile(self.test_db_path))
 
         # we want to run in testing mode, b/c it gives better error messages
         self.assertTrue(self.app.config['TESTING'])
@@ -104,5 +109,4 @@ class UnitTestBase(unittest.TestCase):
         # security options
         self.assertTrue(self.app.config['SESSION_COOKIE_SECURE'])
         self.assertTrue(self.app.config['REMEMBER_COOKIE_SECURE'])
-
 

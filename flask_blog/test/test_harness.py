@@ -13,9 +13,9 @@ from . import UnitTestBase
 DATABASE_PATH = None
 class TestHarnessUnitTests(UnitTestBase):
     def test__test_harness__creates_test_db(self):
-        self.assertTrue(os.path.isfile(self.app_db_path))
+        self.assertTrue(os.path.isfile(self.test_db_path))
         global DATABASE_PATH
-        DATABASE_PATH = self.app_db_path
+        DATABASE_PATH = self.test_db_path
 class TestHarnessLateUnitTests(unittest.TestCase):
     def test__test_harness__removes_rest_db(self):
         global DATABASE_PATH
