@@ -28,6 +28,7 @@ class UnitTestBase(unittest.TestCase):
     CODE_302 = '302 FOUND'      # redirect
     CODE_404 = '404 NOT FOUND'
 
+    UTF8 = 'utf-8'
 
     @classmethod
     def setUpClass(cls):
