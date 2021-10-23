@@ -11,10 +11,11 @@
         <!-- username -->
         <div class="form-group">
           {{ form.username.label(class="form-control-label") }}
-          {% if form.username.errors%}
+          {% if form.username.errors %}
             {{ form.username(class="form-control form-control-lg is-invalid") }}
             <div class="invalid-feedback">
               {% for error in form.username.errors %}
+                <!-- testing tag: username invalid  -->
                 <span>{{ error }}</span>
               {% endfor %}
             </div>
@@ -25,10 +26,11 @@
         <!-- email -->
         <div class="form-group">
           {{ form.email.label(class="form-control-label") }}
-          {% if form.email.errors%}
+          {% if form.email.errors %}
             {{ form.email(class="form-control form-control-lg is-invalid") }}
             <div class="invalid-feedback">
               {% for error in form.email.errors %}
+                <!-- testing tag: email invalid  -->
                 <span>{{ error }}</span>
               {% endfor %}
             </div>
@@ -39,10 +41,11 @@
         <!-- password -->
         <div class="form-group">
           {{ form.password.label(class="form-control-label") }}
-          {% if form.password.errors%}
+          {% if form.password.errors %}
             {{ form.password(class="form-control form-control-lg is-invalid") }}
             <div class="invalid-feedback">
               {% for error in form.password.errors %}
+                <!-- testing tag: password invalid  -->
                 <span>{{ error }}</span>
               {% endfor %}
             </div>
@@ -53,10 +56,11 @@
         <!-- confirm password -->
         <div class="form-group">
           {{ form.confirm_password.label(class="form-control-label") }}
-          {% if form.confirm_password.errors%}
+          {% if form.confirm_password.errors %}
             {{ form.confirm_password(class="form-control form-control-lg is-invalid") }}
             <div class="invalid-feedback">
               {% for error in form.confirm_password.errors %}
+                <!-- testing tag: confirm password invalid  -->
                 <span>{{ error }}</span>
               {% endfor %}
             </div>

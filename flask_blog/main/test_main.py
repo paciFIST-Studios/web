@@ -36,6 +36,37 @@ class MainModuleTests(UnitTestBase):
             self.assertTrue(self.response_has_tag(response, self.HOME_HTML))
             self.assertTrue(self.user_is_not_authenticated(response))
 
+    def test__cannot_login__without_credentials(self):
+        with self.client as c:
+            response = c.post(
+                '/login'
+                , data=dict(email='', password='')
+                , follow_redirects=True)
+            self.assertEqual(response.status, self.CODE_200)
+            self.assertTrue(self.response_has_tag(response, self.LOGIN_HTML))
+            self.assertTrue(self.user_is_not_authenticated(response))
+
+    def test__user_can_login__with_valid_credentials(self):
+        with self.client as c:
+            response = c.post(
+                '/login'
+                , data=dict(email=self.TEST_EMAIL, password=self.TEST_PASS)
+                , follow_redirects=True)
+            self.assertEqual(response.status, self.CODE_200)
+            self.assertTrue(self.response_has_tag(response, self.HOME_HTML))
+            self.assertTrue(self.user_is_authenticated(response))
+
+    def test__user_can_logout__after_login_with_valid_credentials(self):
+        with self.client as c:
+            c.post(
+                '/login'
+                , data=dict(email=self.TEST_EMAIL, password=self.TEST_PASS)
+                , follow_redirects=True)
+            response = c.get('logout', follow_redirects=True)
+            self.assertEqual(response.status, self.CODE_200)
+            self.assertTrue(self.response_has_tag(response, self.HOME_HTML))
+            self.assertTrue(self.user_is_not_authenticated(response))
+
     def test__login_existing_user__redirects_user_to_home(self):
         with self.client as c:
             response = c.post(
@@ -116,7 +147,14 @@ class MainModuleTests(UnitTestBase):
     def test__request_password_reset__allowed__for_existing_account(self):
         pass
 
-    def test__request_password_reset__fails_silently__for_nonexistant_account(self):
+    def test__request_password_reset__fails_silently__for_nonexistent_account(self):
+        # with self.client as c:
+        #     response = c.get('/reset_password', follow_redirects=True)
+        #     self.assertEqual(response.status, self.CODE_200)
+        #     self.assertFalse(self.response_has_tag(response, self.REQUEST_PASSWORD_RESET_HTML))
+        #     # redirects to home
+        #     self.assertTrue(self.response_has_tag(response, self.HOME_HTML))
+        #     self.assertTrue(self.user_is_authenticated(response))
         pass
 
     def test__password_reset_email__can_be_used_to_reset_password(self):

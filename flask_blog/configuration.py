@@ -28,4 +28,5 @@ class TestConfig (Config):
 
     DEBUG = False
     TESTING = True
+    # this is testing specific
     WTF_CSRF_ENABLED = False

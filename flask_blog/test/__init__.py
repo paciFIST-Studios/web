@@ -27,6 +27,10 @@ class UnitTestBase(unittest.TestCase):
     LOGIN_HTML = '<!-- testing tag: login page -->'
     PASSWORD_RESET_HTML = '<!-- testing tag: do password reset -->'
     REGISTER_HTML = '<!-- testing tag: register account page -->'
+    REGISTRATION_ERROR_EMAIL_INVALID = '<!-- testing tag: email invalid  -->'
+    REGISTRATION_ERROR_USERNAME_INVALID = '<!-- testing tag: username invalid  -->'
+    # REGISTRATION_ERROR_PASSWORD_INVALID = '<!-- testing tag: password invalid  -->'
+    # REGISTRATION_ERROR_CONFIRM_PASSWORD_INVALID = '<!-- testing tag: confirm password invalid  -->'
     REQUEST_PASSWORD_RESET_HTML = '<!-- testing tag: request password reset -->'
     RESUME_HTML = '<!-- testing tag: resume page -->'
 
@@ -64,6 +68,7 @@ class UnitTestBase(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         with cls.app.app_context():
+            db.session.remove()
             db.drop_all()
 
         # here, we remove the test db.  Note: if the program is interrupted--that's particularly
@@ -85,6 +90,16 @@ class UnitTestBase(unittest.TestCase):
     def user_is_not_authenticated(cls, response, decode_as='utf-8'):
         return cls.response_has_tag(response, cls.LAYOUT_HTML__USER_NOT_AUTHENTICATED, decode_as)
 
+
+    @staticmethod
+    def get_user_registration_dict(username, email, password):
+        return dict(
+            username=username
+            , email=email
+            , password=password
+            , confirm_password=password
+            # , submit='Sign+Up'
+        )
 
 
     def test__base_configuration__has_correct_defaults(self):
