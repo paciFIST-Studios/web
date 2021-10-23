@@ -25,10 +25,6 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarToggle">
           <div class="navbar-nav me-auto">
-            <!--
-            <a class="nav-item nav-link" href="{{ url_for('main.home') }}">Home</a>
-            <a class="nav-item nav-link" href="{{ url_for('main.about') }}">Resume</a>
-            -->
             <form>
               <input class="form-control" type="text" placeholder="Search" aria-label="Search">
             </form>
@@ -65,8 +61,11 @@
 
         <!-- this block is overridden by other forms -->
         {% block content %}{% endblock %}
+
       </div>
+
       {% if hide_side_bar %}
+        <!-- build nothing -->
       {% else %}
       <div class="col-md-4">
         <div class="content-section">

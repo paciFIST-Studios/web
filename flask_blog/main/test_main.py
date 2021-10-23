@@ -1,9 +1,5 @@
+import unittest
 from ..test import UnitTestBase
-
-from flask_login import current_user, login_manager
-
-#from flask_blog import db, bcrypt
-from flask_blog.models import User
 
 class MainModuleTests(UnitTestBase):
 
