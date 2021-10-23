@@ -18,6 +18,9 @@ class UnitTestBase(unittest.TestCase):
     # these tags exist in the html of different pages, and are used to simplify the
     # testing of different site routes
     ACCOUNT_HTML = '<!-- testing tag: account edit page -->'
+    ERROR_403_HTML = '<!-- testing tag: forbidden 403 -->'
+    ERROR_404_HTML = '<!-- testing tag: error 404 -->'
+    ERROR_500_HTML = '<!-- testing tag: error 500 -->'
     HOME_HTML = '<!-- testing tag: home page -->'
     LAYOUT_HTML__USER_AUTHENTICATED = '<!-- testing tag: layout user is authenticated -->'
     LAYOUT_HTML__USER_NOT_AUTHENTICATED = '<!-- testing tag: layout user is not authenticated -->'

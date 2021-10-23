@@ -12,9 +12,22 @@ class MainModuleTests(UnitTestBase):
 
     # Tests #############################################################################
 
-    def test__bad_route__returns_404(self):
+    def test__bad_route__returns_404__when_logged_out(self):
         response = self.client.get('bad_route')
         self.assertEqual(response.status, self.CODE_404)
+        self.assertTrue(self.response_has_tag(response, self.ERROR_404_HTML))
+        self.assertTrue(self.user_is_not_authenticated(response))
+
+    def test__bad_route__returns_404__when_logged_in(self):
+        with self.client as c:
+            c.post(
+                '/login'
+                , data=dict(email=self.TEST_EMAIL, password=self.TEST_PASS)
+                , follow_redirects=True)
+            response = self.client.get('bad_route')
+            self.assertEqual(response.status, self.CODE_404)
+            self.assertTrue(self.response_has_tag(response, self.ERROR_404_HTML))
+            self.assertTrue(self.user_is_authenticated(response))
 
     def test__home_route__accessible__when_not_logged_in(self):
         with self.client as c:
