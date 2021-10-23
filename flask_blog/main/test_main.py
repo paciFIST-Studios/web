@@ -102,7 +102,7 @@ class MainModuleTests(UnitTestBase):
 
     def test__request_password_reset__not_accessible__when_logged_in(self):
         with self.client as c:
-            response = c.post(
+            c.post(
                 '/login'
                 , data=dict(email=self.TEST_EMAIL, password=self.TEST_PASS)
                 , follow_redirects=True)
