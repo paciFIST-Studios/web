@@ -21,20 +21,11 @@ class Config:
     SESSION_COOKIE_SECURE = True
     REMEMBER_COOKIE_SECURE = True
 
-class TestConfig:
+class TestConfig (Config):
     SECRET_KEY = 'secret'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    MAIL_SERVER = 'smtp.gmail.com'
-    MAIL_PORT = 465
-    MAIL_USE_SSL = True
-    MAIL_USERNAME = config.get('EMAIL_USERNAME') if config else os.environ.get('EMAIL_USERNAME')
-    MAIL_PASSWORD = config.get('EMAIL_PASSWORD') if config else os.environ.get('EMAIL_PASSWORD')
-
-    SESSION_COOKIE_SECURE = True
-    REMEMBER_COOKIE_SECURE = True
-
+    DEBUG = False
     TESTING = True
     WTF_CSRF_ENABLED = False
-    DEBUG = False
