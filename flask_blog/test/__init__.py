@@ -11,24 +11,26 @@ USING_CONFIG_CLASS = TestConfig
 
 class UnitTestBase(unittest.TestCase):
 
-    TEST_EMAIL = 'tester@ellielove.com'
+    TEST_EMAIL = 'tester@testtest.com'
     TEST_USER = 'tester'
     TEST_PASS = 'test123'
 
-    ACCOUNT_CREATION_PAGE = '<legend class="border-bottom mb-4">Join Today</legend>'
-    ACCOUNT_EDIT_PAGE = '<legend class="border-bottom mb-4">Update Account</legend>'
-    MAIN_PAGE_LOGIN_FAILED_STR = '<div class="alert alert-danger">\n                Login Failed!.  Check email and password\n              </div>'
-    MAIN_PAGE_NOT_LOGGED_IN = '<a class="nav-item nav-link" href="/login">Login</a>\n              <a class="nav-item nav-link" href="/register">Register</a>'
-    MAIN_PAGE_LOGGED_IN = '<a class="nav-item nav-link" href="/account">Account</a>'
-    REDIRECT_TO_MAIN_PAGE = '<p>You should be redirected automatically to target URL: <a href="/">/</a>. If not click the link.'
-    REQUEST_PASSWORD_RESET_PAGE = '<input class="btn btn-outline-info" id="submit" name="submit" type="submit" value="Request Password Reset">'
-    RESUME_PAGE = '<h1>Elizabeth Barrett</h1>\n<p>Software Developer in Test (SDET)\n    <br> Seattle, Washington, USA\n    <br> ellie@paciFIST.studio\n</p>'
+    # these tags exist in the html of different pages, and are used to simplify the
+    # testing of different site routes
+    ACCOUNT_HTML = '<!-- testing tag: account edit page -->'
+    HOME_HTML = '<!-- testing tag: home page -->'
+    LAYOUT_HTML__USER_AUTHENTICATED = '<!-- testing tag: layout user is authenticated -->'
+    LAYOUT_HTML__USER_NOT_AUTHENTICATED = '<!-- testing tag: layout user is not authenticated -->'
+    LOGIN_HTML = '<!-- testing tag: login page -->'
+    PASSWORD_RESET_HTML = '<!-- testing tag: do password reset -->'
+    REGISTER_HTML = '<!-- testing tag: register account page -->'
+    REQUEST_PASSWORD_RESET_HTML = '<!-- testing tag: request password reset -->'
+    RESUME_HTML = '<!-- testing tag: resume page -->'
 
     CODE_200 = '200 OK'
     CODE_302 = '302 FOUND'      # redirect
     CODE_404 = '404 NOT FOUND'
 
-    UTF8 = 'utf-8'
 
     @classmethod
     def setUpClass(cls):
@@ -47,7 +49,7 @@ class UnitTestBase(unittest.TestCase):
 
         with cls.app.app_context():
             db.create_all()
-            # Test user exists in DB for all test suites
+            # Add test user to test db, so different test suites can access db w/o having to register
             hash_word = bcrypt.generate_password_hash(cls.TEST_PASS).decode('utf-8')
             user = User(username=cls.TEST_USER, email=cls.TEST_EMAIL, password=hash_word)
             db.session.add(user)
@@ -61,6 +63,20 @@ class UnitTestBase(unittest.TestCase):
 
         if os.path.isfile(cls.app_db_path):
             os.remove(cls.app_db_path)
+
+
+    @staticmethod
+    def response_has_tag(response, tag, decode_as='utf-8'):
+        return tag in response.data.decode(decode_as)
+
+    @classmethod
+    def user_is_authenticated(cls, response, decode_as='utf-8'):
+        return cls.response_has_tag(response, cls.LAYOUT_HTML__USER_AUTHENTICATED, decode_as)
+
+    @classmethod
+    def user_is_not_authenticated(cls, response, decode_as='utf-8'):
+        return cls.response_has_tag(response, cls.LAYOUT_HTML__USER_NOT_AUTHENTICATED, decode_as)
+
 
 
     def test__base_configuration__has_correct_defaults(self):

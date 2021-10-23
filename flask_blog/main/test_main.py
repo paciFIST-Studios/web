@@ -10,108 +10,100 @@ class MainModuleTests(UnitTestBase):
     def tearDown(self):
         pass
 
-    def test__main_module__passing_test(self):
-        self.assertTrue(True)
+    # Tests #############################################################################
 
     def test__bad_route__returns_404(self):
         response = self.client.get('bad_route')
         self.assertEqual(response.status, self.CODE_404)
 
-    def test__home_route_accessible__when_not_logged_in(self):
-        response = self.client.get('/')
-        self.assertEqual(response.status, self.CODE_200)
-        self.assertTrue(self.MAIN_PAGE_NOT_LOGGED_IN in response.data.decode(self.UTF8))
-
-    def test__home_route_accessible__when_logged_in(self):
+    def test__home_route__accessible__when_not_logged_in(self):
         with self.client as c:
-            response = c.post(
-                '/login'
-                , data=dict(email=self.TEST_EMAIL, password=self.TEST_PASS)
-                , follow_redirects=True)
-            self.assertTrue(self.MAIN_PAGE_LOGGED_IN in response.data.decode(self.UTF8))
+            response = c.get('/')
             self.assertEqual(response.status, self.CODE_200)
-            response = c.get('/account')
-            self.assertEqual(response.status, self.CODE_200)
-            self.assertTrue(self.ACCOUNT_EDIT_PAGE in response.data.decode(self.UTF8))
+            self.assertTrue(self.response_has_tag(response, self.HOME_HTML))
+            self.assertTrue(self.user_is_not_authenticated(response))
 
-    def test__login_is_possible__with_existing_account(self):
+    def test__login_existing_user__redirects_user_to_home(self):
         with self.client as c:
             response = c.post(
                 '/login'
                 , data=dict(email=self.TEST_EMAIL, password=self.TEST_PASS)
                 , follow_redirects=True)
             self.assertEqual(response.status, self.CODE_200)
-            self.assertTrue(self.MAIN_PAGE_LOGGED_IN in response.data.decode(self.UTF8))
+            self.assertTrue(self.response_has_tag(response, self.HOME_HTML))
+            self.assertTrue(self.user_is_authenticated(response))
 
-    def test__login_is_not_possible__with_default_admin_credentials(self):
-        # do we even have default admin credentials?
-        pass
+    def test__home_route__accessible__when_logged_in(self):
+        with self.client as c:
+            c.post(
+                '/login'
+                , data=dict(email=self.TEST_EMAIL, password=self.TEST_PASS)
+                , follow_redirects=False)
+            response = c.get('/')
+            self.assertEqual(response.status, self.CODE_200)
+            self.assertTrue(self.response_has_tag(response, self.HOME_HTML))
+            self.assertTrue(self.user_is_authenticated(response))
 
-
-    def test__resume_route_accessible__when_not_logged_in(self):
+    def test__resume_route__accessible__when_not_logged_in(self):
         with self.client as c:
             response = c.get('/about')
             self.assertEqual(response.status, self.CODE_200)
-            self.assertTrue(self.RESUME_PAGE in response.data.decode(self.UTF8))
+            self.assertTrue(self.response_has_tag(response, self.RESUME_HTML))
+            self.assertTrue(self.user_is_not_authenticated(response))
 
-    def test__resume_route_accessible__when_logged_in(self):
+    def test__resume_route__accessible__when_logged_in(self):
         with self.client as c:
-            response = c.post(
+            c.post(
                 '/login'
                 , data=dict(email=self.TEST_EMAIL, password=self.TEST_PASS)
                 , follow_redirects=True)
-            self.assertEqual(response.status, self.CODE_200)
-            self.assertTrue(self.MAIN_PAGE_LOGGED_IN in response.data.decode(self.UTF8))
             response = c.get('/about')
             self.assertEqual(response.status, self.CODE_200)
-            self.assertTrue(self.RESUME_PAGE in response.data.decode(self.UTF8))
+            self.assertTrue(self.response_has_tag(response, self.RESUME_HTML))
+            self.assertTrue(self.user_is_authenticated(response))
 
-    def test__account_creation_page_accessible__when_not_logged_in(self):
+    def test__register_account_page__accessible__when_not_logged_in(self):
         with self.client as c:
             response = c.get('/register', follow_redirects=True)
             self.assertEqual(response.status, self.CODE_200)
-            self.assertTrue(self.ACCOUNT_CREATION_PAGE in response.data.decode(self.UTF8))
+            self.assertTrue(self.response_has_tag(response, self.REGISTER_HTML))
+            self.assertTrue(self.user_is_not_authenticated(response))
 
-    def test__account_creation_page__redirects_to_main__when_logged_in(self):
+    def test__register_account_page__redirects_to_home__when_logged_in(self):
+        with self.client as c:
+            c.post(
+                '/login'
+                , data=dict(email=self.TEST_EMAIL, password=self.TEST_PASS)
+                , follow_redirects=True)
+            response = c.get('/register', follow_redirects=True)
+            self.assertEqual(response.status, self.CODE_200)
+            self.assertTrue(self.response_has_tag(response, self.HOME_HTML))
+            self.assertTrue(self.user_is_authenticated(response))
+
+    def test__request_password_reset__accessible__when_logged_out(self):
+        with self.client as c:
+            response = c.get('/reset_password', follow_redirects=True)
+            self.assertEqual(response.status, self.CODE_200)
+            self.assertTrue(self.response_has_tag(response, self.REQUEST_PASSWORD_RESET_HTML))
+            self.assertTrue(self.user_is_not_authenticated(response))
+
+    def test__request_password_reset__not_accessible__when_logged_in(self):
         with self.client as c:
             response = c.post(
                 '/login'
                 , data=dict(email=self.TEST_EMAIL, password=self.TEST_PASS)
                 , follow_redirects=True)
-            self.assertEqual(response.status, self.CODE_200)
-            self.assertTrue(self.MAIN_PAGE_LOGGED_IN in response.data.decode(self.UTF8))
-            # check that we get a redirect
-            response = c.get('/register')
-            self.assertEqual(response.status, self.CODE_302)
-            self.assertTrue(self.REDIRECT_TO_MAIN_PAGE in response.data.decode(self.UTF8))
-            # check that the redirect goes to main page
-            response = c.get('/register', follow_redirects=True)
-            self.assertEqual(response.status, self.CODE_200)
-            self.assertTrue(self.MAIN_PAGE_LOGGED_IN in response.data.decode(self.UTF8))
-
-    def test__password_reset_request_accessible__when_not_logged_in(self):
-        with self.client as c:
             response = c.get('/reset_password', follow_redirects=True)
             self.assertEqual(response.status, self.CODE_200)
-            self.assertTrue(self.REQUEST_PASSWORD_RESET_PAGE in response.data.decode(self.UTF8))
+            self.assertFalse(self.response_has_tag(response, self.REQUEST_PASSWORD_RESET_HTML))
+            # redirects to home
+            self.assertTrue(self.response_has_tag(response, self.HOME_HTML))
+            self.assertTrue(self.user_is_authenticated(response))
 
-    def test__password_reset_request_not_accessible__when_logged_in(self):
-        with self.client as c:
-            response = c.post(
-                '/login'
-                , data=dict(email=self.TEST_EMAIL, password=self.TEST_PASS)
-                , follow_redirects=True)
-            self.assertTrue(self.MAIN_PAGE_LOGGED_IN in response.data.decode(self.UTF8))
-            self.assertEqual(response.status, self.CODE_200)
-            response = c.get('/reset_password', follow_redirects=True)
-            self.assertEqual(response.status, self.CODE_200)
-            self.assertFalse(self.REQUEST_PASSWORD_RESET_PAGE in response.data.decode(self.UTF8))
-            self.assertTrue(self.MAIN_PAGE_LOGGED_IN in response.data.decode(self.UTF8))
-
-    def test__password_reset_request_allowed__for_existing_account(self):
+    def test__request_password_reset__allowed__for_existing_account(self):
         pass
 
-    def test__password_reset_request_fails_silently__for_nonexistant_account(self):
+    def test__request_password_reset__fails_silently__for_nonexistant_account(self):
         pass
 
     def test__password_reset_email__can_be_used_to_reset_password(self):
