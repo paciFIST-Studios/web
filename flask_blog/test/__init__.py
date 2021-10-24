@@ -25,6 +25,7 @@ class UnitTestBase(unittest.TestCase):
     LAYOUT_HTML__USER_AUTHENTICATED = '<!-- testing tag: layout user is authenticated -->'
     LAYOUT_HTML__USER_NOT_AUTHENTICATED = '<!-- testing tag: layout user is not authenticated -->'
     LOGIN_HTML = '<!-- testing tag: login page -->'
+    LOGIN_FAIL_MESSAGE = 'Login Failed!.  Check email and password'
     PASSWORD_RESET_HTML = '<!-- testing tag: do password reset -->'
     REGISTER_HTML = '<!-- testing tag: register account page -->'
     REGISTRATION_ERROR_EMAIL_INVALID = '<!-- testing tag: email invalid  -->'
