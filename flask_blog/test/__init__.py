@@ -93,17 +93,6 @@ class UnitTestBase(unittest.TestCase):
         return cls.response_has_tag(response, cls.LAYOUT_HTML__USER_NOT_AUTHENTICATED, decode_as)
 
 
-    @staticmethod
-    def get_user_registration_dict(username, email, password):
-        return dict(
-            username=username
-            , email=email
-            , password=password
-            , confirm_password=password
-            # , submit='Sign+Up'
-        )
-
-
     def test__base_configuration__has_correct_defaults(self):
         # app has been created
         self.assertTrue(self.app)

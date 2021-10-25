@@ -1,7 +1,14 @@
+import io
+import os.path
 import re
 import uuid
 import unittest
-from ..test import UnitTestBase
+
+from flask_blog.test import UnitTestBase
+from flask_blog.users.utility import save_profile_image, remove_stored_profile_image
+
+from werkzeug.datastructures import FileStorage
+from PIL import Image
 
 
 class UserModuleTests(UnitTestBase):
@@ -14,7 +21,7 @@ class UserModuleTests(UnitTestBase):
         pass
 
     @staticmethod
-    def get_registered_user(client, follow_redirects=True)-> tuple:
+    def get_registered_user(client, follow_redirects=True):
         username_str = 'user_' + str(uuid.uuid4())[:15]
         user = dict(
             username = username_str
@@ -51,7 +58,8 @@ class UserModuleTests(UnitTestBase):
 
             profile = re.search('<img class=\"rounded-circle account-img\" src=\"(.*)\"', line)
             if profile:
-                user_profile = profile.group(1)
+                # save just the filename, since we know all images are stored in static/user_profile_images
+                user_profile = profile.group(1).split('/')[-1]
 
         return user_account, user_email, user_profile
 
@@ -207,7 +215,7 @@ class UserModuleTests(UnitTestBase):
             self.assertTrue(self.response_has_tag(response, self.ACCOUNT_HTML))
             self.assertTrue(self.user_is_authenticated(response))
             # show that account page has expected info
-            username, email, profile = self.get_user_data_from_account_response(response)
+            username, email, _ = self.get_user_data_from_account_response(response)
             self.assertEqual(user['username'], username)
             self.assertEqual(user['email'], email)
             # send account update
@@ -238,7 +246,7 @@ class UserModuleTests(UnitTestBase):
             self.assertTrue(self.response_has_tag(response, self.ACCOUNT_HTML))
             self.assertTrue(self.user_is_authenticated(response))
             # show that account page has expected info
-            username, email, profile = self.get_user_data_from_account_response(response)
+            username, email, _ = self.get_user_data_from_account_response(response)
             self.assertEqual(user['username'], username)
             self.assertEqual(user['email'], email)
             # send account update
@@ -253,8 +261,136 @@ class UserModuleTests(UnitTestBase):
             self.assertEqual(user['username'], old_username)
             self.assertEqual(user['email'], new_email)
 
+
+    def test__unit_test_for__save_profile_image(self):
+        with self.app.app_context():
+            # ELLIE: I don't think we can use FileStorage with a "with" context manager
+            # , as a result, we have to manually close the mock_file to prevent a memory leak
+            # , and that's why we're using the try/finally block.
+            #   These tests are automated, and we don't want any chance of a leak in something
+            #   that'll run a bajillion times without anybody looking into it.
+            #   That said, the automated tests should be running in a VM on github, when they do run,
+            #   so it "Shouldn't Be A Problem" and "Should Just Work", even if they do leak.
+            #   We're manually closing the file anyway
+
+            # mocking the input we'd get from image upload, NOTE: open reads BYTES for stream
+            mock_file = FileStorage(stream=open('test.jpg', 'rb'), filename='test.jpg', content_type='jpg')
+
+            path = None
+            try:
+                # name is the filename, path is the absolute path to the file
+                name, path = save_profile_image(mock_file)
+                self.assertTrue(name != '')
+                self.assertTrue(name in path)
+                self.assertFalse(path in name)
+                self.assertTrue(os.path.isfile(path))
+
+                if os.path.isfile(path):
+                    with Image.open(path) as _image:
+                        # the image won't always come out as exactly (125, 125)
+                        # , but it should always be smaller than that
+                        self.assertTrue(_image.size[0] <= 125)
+                        self.assertTrue(_image.size[1] <= 125)
+            finally:
+                # we need to make sure to delete this file ourselves,
+                # b/c we don't want images piling up on the server
+                if os.path.isfile(path):
+                    os.remove(path)
+
+                # we have to close the mock file to prevent a memory leak
+                mock_file.close()
+
+    def test__unit_test_for__remove_stored_profile_image(self):
+        with self.app.app_context():
+            # not allowed to delete default image
+            default_image_path = os.path.join(self.app.root_path, 'static/user_profile_images', 'default.jpg')
+            self.assertTrue(os.path.isfile(default_image_path))
+            remove_stored_profile_image('default.jpg')
+            self.assertTrue(os.path.isfile(default_image_path))
+
+            # ELLIE: I don't think we can use FileStorage with a "with" context manager
+            # , as a result, we have to manually close the mock_file to prevent a memory leak
+            # , and that's why we're using the try/finally block.
+            #   These tests are automated, and we don't want any chance of a leak in something
+            #   that'll run a bajillion times without anybody looking into it.
+            #   That said, the automated tests should be running in a VM on github, when they do run,
+            #   so it "Shouldn't Be A Problem" and "Should Just Work", even if they do leak.
+            #   We're manually closing the file anyway
+
+            # mocking the input we'd get from image upload, NOTE: open reads BYTES for stream
+            mock_file = FileStorage(stream=open('test.jpg', 'rb'), filename='test.jpg', content_type='jpg')
+
+            path = None
+            try:
+                name, path = save_profile_image(mock_file)
+
+                self.assertTrue(os.path.isfile(path))
+                remove_stored_profile_image(name)
+                self.assertFalse(os.path.isfile(path))
+            finally:
+                # we need to make sure to delete this file ourselves,
+                # b/c we don't want images piling up on the server
+                if os.path.isfile(path):
+                    os.remove(path)
+
+                # we have to close the mock file to prevent a memory leak
+                mock_file.close()
+
+
     def test__can_change_profile_pic__for_user(self):
-        pass
+        with self.client as c:
+            # get user
+            user, response = self.get_registered_user(c)
+            self.assertEqual(response.status, self.CODE_200)
+            self.assertFalse(self.response_has_tag(response, self.LOGIN_FAIL_MESSAGE))
+            # login
+            response = c.post('/login', data=user, follow_redirects=True)
+            self.assertEqual(response.status, self.CODE_200)
+            self.assertFalse(self.response_has_tag(response, self.LOGIN_FAIL_MESSAGE))
+            # go to account page
+            response = c.get('/account', follow_redirects=True)
+            self.assertEqual(response.status, self.CODE_200)
+            self.assertTrue(self.response_has_tag(response, self.ACCOUNT_HTML))
+            self.assertTrue(self.user_is_authenticated(response))
+            # show that account page has expected info
+            username, email, _ = self.get_user_data_from_account_response(response)
+            self.assertEqual(user['username'], username)
+            self.assertEqual(user['email'], email)
+
+            # we have to use a slightly different mock format to supply mocked form data
+            # , but we can use a context manager to handle file closing
+            with open('test.jpg', 'rb') as infile:
+                mock_file = io.BytesIO(infile.read())
+                user['image'] = (mock_file, 'test.jpg')
+
+                to_remove = None
+                try:
+                    # send account update
+                    response = c.post('/account', data=user, follow_redirects=True, content_type='multipart/form-data')
+                    self.assertEqual(response.status, self.CODE_200)
+                    self.assertTrue(self.response_has_tag(response, self.ACCOUNT_HTML))
+                    self.assertTrue(self.user_is_authenticated(response))
+
+                    _, __, profile = self.get_user_data_from_account_response(response)
+                    # verify that the filename changed
+                    self.assertTrue(self.response_has_tag(response, self.ACCOUNT_HTML__UPDATE_SUCCESS))
+                    self.assertTrue('.jpg' in profile)
+                    self.assertFalse('default.jpg' in profile)
+
+                    profile_image = os.path.join(self.app.root_path, 'static/user_profile_images', profile)
+                    default_image = os.path.join(self.app.root_path, 'static/user_profile_images', 'default.jpg')
+
+                    to_remove = profile_image
+
+                    with open(profile_image, 'rb') as p:
+                        with open(default_image, 'rb') as d:
+                            # assert that these are not the same file, based on file contents
+                            self.assertFalse(p.read() == d.read())
+
+                finally:
+                    if os.path.isfile(to_remove):
+                        os.remove(to_remove)
+
 
     # can we reset passwords in the account page?
     # def test__can_change_password__for_existing_user(self):

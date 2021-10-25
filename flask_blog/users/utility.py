@@ -23,12 +23,14 @@ def save_profile_image(image):
 
     # save from the resized file
     _image.save(image_storage_path)
-    return image_file_name
+    # image_file_name is the filename and extension
+    # image_storage_path is the absolute path of the image file
+    return image_file_name, image_storage_path
 
 def remove_stored_profile_image(filename):
     # note: don't delete our default image.
     # happens the first time user attempts to update their profile
-    if filename == 'default.jpg':
+    if 'default.jpg' in filename:
         return
     _image = os.path.join(current_app.root_path, 'static/user_profile_images', filename)
     if os.path.isfile(_image):

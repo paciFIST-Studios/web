@@ -68,7 +68,7 @@ def account():
 
         # profile image
         if form.image.data:
-            image_file = save_profile_image(form.image.data)
+            image_file, _ = save_profile_image(form.image.data)
             to_remove = current_user.image_file
             current_user.image_file = image_file
             remove_stored_profile_image(filename=to_remove)
