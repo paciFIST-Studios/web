@@ -1,5 +1,10 @@
+import json
+from random import randint
+
 import unittest
 from ..test import UnitTestBase
+
+from . import HELP_MESSAGE
 
 class MainModuleTests(UnitTestBase):
 
@@ -196,7 +201,29 @@ class MainModuleTests(UnitTestBase):
         pass
 
 
+    def test__dice_api__returns_correct_values__for_correct_request(self):
+        with self.client as c:
+            for i in range(10):
+                count = randint(1, 10)
+                size = randint(1, 20)
+                modifier = randint(0, 10)
+                command = f'{count}d{size}+{modifier}'
+                response = c.get(f'/dice/{command}')
+                self.assertEqual(response.status, self.CODE_200)
+                self.assertEqual(response.content_type, 'application/json')
+                data = json.loads(response.data.decode('utf-8'))
+                self.assertEqual(data['request'], command)
+                self.assertEqual(len(data['rolls']), count)
+                self.assertTrue(int(data['total']) <= count * size + modifier)
 
+    def test__dice_api__returns_help_message__for_malformed_request(self):
+        with self.client as c:
+            response = c.get(f'/dice/45')
+            self.assertEqual(response.status, self.CODE_200)
+            # note: the help message is not json
+            self.assertEqual(response.content_type, 'text/html; charset=utf-8')
+            data = response.data.decode('utf-8')
+            self.assertEqual(data, HELP_MESSAGE)
 
 if __name__ == '__main__':
     unittest.main()
