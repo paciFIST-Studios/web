@@ -7,6 +7,7 @@ from flask_blog.util import load_json
 
 from flask_blog.models import Post, User
 
+
 def get_testing_data():
     return {
         'username':'test1',
