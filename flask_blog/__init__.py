@@ -43,5 +43,9 @@ def create_application(config_class=Config):
     app.register_blueprint(main)
     app.register_blueprint(errors)
 
+    # rest api
+    from flask_blog.api.routes import api
+    app.register_blueprint(api)
+
     return app
 
