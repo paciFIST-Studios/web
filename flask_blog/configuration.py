@@ -5,6 +5,7 @@ from flask_blog.util import load_json
 secret = '/etc/web.config.json'
 config = load_json(secret)
 
+
 class Config:
     SECRET_KEY = config.get("SECRET_KEY") if config else os.environ.get('SECRET_KEY')
 
@@ -20,6 +21,7 @@ class Config:
 
     SESSION_COOKIE_SECURE = True
     REMEMBER_COOKIE_SECURE = True
+
 
 class TestConfig (Config):
     SECRET_KEY = 'secret'

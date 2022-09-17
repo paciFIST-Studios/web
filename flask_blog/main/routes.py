@@ -22,6 +22,7 @@ def about():
 # STATELESS API SERVICE ########################################################################################
 from . import parse_roll_request, roll_dice
 
+
 @main.route('/dice/<string:data>', methods=['GET'])
 def api_request(data):
     roll_request = parse_roll_request(data)

@@ -19,6 +19,8 @@ def parse_roll_request(request):
 
 
 HELP_MESSAGE = 'Bad Request.  Try "XdY+Z", where X, Y, and Z are whole numbers greater than or equal to zero\n'
+
+
 def roll_dice(data):
     if 'help' in data and data['help']:
         return HELP_MESSAGE

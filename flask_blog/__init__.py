@@ -21,6 +21,7 @@ login_manager.session_protection = None
 
 mail = Mail()
 
+
 def create_application(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
@@ -48,4 +49,3 @@ def create_application(config_class=Config):
     app.register_blueprint(api)
 
     return app
-
